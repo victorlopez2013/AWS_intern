@@ -66,10 +66,10 @@
     <p id="request-status"></p>
     <div id="image-container"></div>
     
-    <script>
+        <script>
     // URL for POST requests
     const dalleEndpoint = 'https://api.openai.com/v1/images/generations';
-    const s3UploadEndpoint = 'static2.0.s3.us-east-1.amazonaws.com';  // s3 url 
+    const s3UploadEndpoint = 'http://localhost:3000/api/upload-to-s3';
 
     // Fetch DOM elements
     const reqButton = document.getElementById('button-request');
@@ -77,7 +77,7 @@
 
     // Attach click behavior to the button
     reqButton.onclick = function () {
-      // ... all the previous code until fetch ...
+      // Your existing code
 
       // Use the Fetch API to do an async POST request to OpenAI:
       fetch(dalleEndpoint, reqParams)
@@ -85,7 +85,6 @@
         .then(json => {
           // Here, add a call to the S3 upload function
           uploadImagesToS3(json.data);
-          addImages(json, prompt);
         })
         .catch(error => {
           reqStatus.innerHTML = 'Error: ' + error.message;
@@ -103,8 +102,6 @@
         });
       });
     }
-
-    // ... addImages function ...
-</script>
+    </script>
 </body>
 </html>
