@@ -1,10 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const fetch = require('node-fetch');
 const AWS = require('aws-sdk');
+const bodyParser = require('body-parser');
+
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-1'
+});
 
 const s3 = new AWS.S3();
-
 const app = express();
+app.use(bodyParser.json());
 
 app.post('/api/upload-to-s3', (req, res) => {
   const imageUrl = req.body.imageUrl;
@@ -13,7 +21,7 @@ app.post('/api/upload-to-s3', (req, res) => {
     .then(res => res.buffer())
     .then(buffer => {
       const params = {
-        Bucket: 'static2.0.s3.us-east-1.amazonaws.com', // your bucket name
+        Bucket: 'static2', // your bucket name
         Key: `your-folder/${Date.now()}.jpg`, // replace with your desired key
         Body: buffer,
         ContentType: 'image/jpeg',
