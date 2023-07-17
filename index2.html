@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dall-E Webapp</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        fieldset {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        input, textarea, button, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        img {
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to DALL-E Generator</h1>
+    <p>Create AI-generated images based on your description</p>
+    <fieldset>
+      <div>
+        <label for="api-key">API Key:</label>
+        <input type="text" id="api-key" name="api-key">
+      </div>
+      <div>
+        <label for="text-prompt">Text Prompt:</label>
+        <input type="text" id="text-prompt" name="text-prompt">
+      </div>
+      <div>
+        <label for="image-count">Image Count (1-4):</label>
+        <input type="number" id="image-count" name="image-count">
+      </div>
+      <div>
+        <label for="image-size">Image Size:</label>
+        <select id="image-size" name="image-size">
+          <option value="256x256">256x256</option>
+          <option value="512x512">512x512</option>
+		  <option value="1024x1024">1024x1024</option>
+        </select>
+      </div>
+      <button id="button-request">Generate Images</button>
+    </fieldset>
+    <p id="request-status"></p>
+    <div id="image-container"></div>
+    
+    <script>
+    // URL for POST requests
+    const dalleEndpoint = 'https://api.openai.com/v1/images/generations';
+    const s3UploadEndpoint = 'https://your-server.com/api/upload-to-s3';  // Replace with your server's API URL
+
+    // Fetch DOM elements
+    const reqButton = document.getElementById('button-request');
+    const reqStatus = document.getElementById('request-status');
+
+    // Attach click behavior to the button
+    reqButton.onclick = function () {
+      // ... all the previous code until fetch ...
+
+      // Use the Fetch API to do an async POST request to OpenAI:
+      fetch(dalleEndpoint, reqParams)
+        .then(res => res.json())
+        .then(json => {
+          // Here, add a call to the S3 upload function
+          uploadImagesToS3(json.data);
+          addImages(json, prompt);
+        })
+        .catch(error => {
+          reqStatus.innerHTML = 'Error: ' + error.message;
+          reqButton.disabled = false;
+        });
+    }
+
+    function uploadImagesToS3(images) {
+      images.forEach(image => {
+        // For each image, send a request to your server to upload it to S3
+        fetch(s3UploadEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageUrl: image.url })
+        });
+      });
+    }
+
+    // ... addImages function ...
+</script>
+</body>
+</html>
